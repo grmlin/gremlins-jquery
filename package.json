@@ -1,0 +1,17 @@
+{
+  "name": "gremlinjs-interests",
+  "version": "0.1.0",
+  "main": "./src/Interests.coffee",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/grmlin/gremlinjs-interests.git"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "grunt": "~0.4.0",
+    "grunt-contrib-coffee": "~0.6.4",
+    "grunt-contrib-uglify": "~0.2.0",
+    "grunt-contrib-clean": "~0.4.0"
+  }
+}
