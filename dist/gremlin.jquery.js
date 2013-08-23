@@ -75,6 +75,6 @@
 
   })();
 
-  GremlinJS.registerExtension(JQuery);
+  Gremlin.registerExtension(JQuery);
 
 }).call(this);

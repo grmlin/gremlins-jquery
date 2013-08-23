@@ -38,4 +38,4 @@ class JQuery
     addElements.call gremlinInstance
     addEvents.call gremlinInstance
 
-GremlinJS.registerExtension JQuery
+Gremlin.registerExtension JQuery
