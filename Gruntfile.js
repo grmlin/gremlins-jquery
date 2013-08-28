@@ -1,55 +1,66 @@
 /*jshint camelcase:false */
 module.exports = function (grunt) {
-  'use strict';
+    'use strict';
 
-  var EXTENSION_NAME = "jquery";
-  var coffeeObj = {},
-      distObj = {};
-  coffeeObj['dist/gremlin.'+EXTENSION_NAME+'.js'] = ['src/'+EXTENSION_NAME+'.coffee'];
-  distObj['dist/gremlin.'+EXTENSION_NAME+'.min.js'] = ['dist/gremlin.'+EXTENSION_NAME+'.js'];
-  
-  grunt.loadNpmTasks('grunt-contrib-coffee');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-clean');
+    var EXTENSION_NAME = "jquery";
+    var coffeeObj = {},
+        distObj = {};
+    coffeeObj['dist/gremlin.' + EXTENSION_NAME + '.js'] = ['src/' + EXTENSION_NAME + '.coffee'];
+    distObj['dist/gremlin.' + EXTENSION_NAME + '.min.js'] = ['dist/gremlin.' + EXTENSION_NAME + '.js'];
 
-  //
-  // Grunt configuration:
-  //
-  //
-  grunt.initConfig({
-    coffee: {
-      extension: {
-        options: {
-          bare: false,
-          sourceMap: true
+    grunt.loadNpmTasks('grunt-contrib-coffee');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-clean');
+    grunt.loadNpmTasks('grunt-contrib-connect');
+
+    //
+    // Grunt configuration:
+    //
+    //
+    grunt.initConfig({
+        coffee: {
+            extension: {
+                options: {
+                    bare: false,
+                    sourceMap: true
+                },
+                files: coffeeObj
+            }
         },
-        files: coffeeObj
-      }
-    },
-    uglify: {
-      options: {
-        banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
-          '<%= grunt.template.today("yyyy-mm-dd") %> */',
-        compress: true,
-        report: 'gzip',
-        wrap: false
-      },
-      dist: {
-        files: distObj
-      }
-    },
-    clean: {
-      extension: ["dist/*"]
-    },
-    pkg: grunt.file.readJSON('package.json')
-  });
+        uglify: {
+            options: {
+                banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
+                    '<%= grunt.template.today("yyyy-mm-dd") %> */',
+                compress: true,
+                report: 'gzip',
+                wrap: false
+            },
+            dist: {
+                files: distObj
+            }
+        },
+        clean: {
+            extension: ["dist/*"]
+        },
+        connect: {
+
+            test: {
+                options: {
+                    port: 4242,
+                    base: './',
+                    keepalive: true
+                }
+            }
+        },
+        pkg: grunt.file.readJSON('package.json')
+    });
 
 
-  // Create shortcuts to main operations.
-  //grunt.registerTask('server', ['docs', 'connect:gremlinjs', 'watch:docs']);
+    // Create shortcuts to main operations.
+    //grunt.registerTask('server', ['docs', 'connect:gremlinjs', 'watch:docs']);
 
-  // the default task, when 'grunt' is executed with no options.
-  grunt.registerTask('default', ['clean', 'coffee', 'uglify']);
+    // the default task, when 'grunt' is executed with no options.
+    grunt.registerTask('default', ['clean', 'coffee', 'uglify']);
 
 };
 

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <link rel="stylesheet" href="lib/mocha.css"/>
+    <style type="text/css">
+        #mocha ul#mocha-report {
+            margin-bottom: 20px;
+        }
+
+        div[data-gremlin-found] {
+            margin: 15px 0;
+            padding: 20px
+        }
+    </style>
+    <script type="text/javascript" src="lib/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="lib/json2.js"></script>
+    <script type="text/javascript" src="lib/mocha.js"></script>
+    <script type="text/javascript" charset="utf-8">
+        // This will be overridden by mocha-helper if you run with grunt
+        mocha.setup('bdd');
+    </script>
+    <script src="lib/gremlin.min.js"></script>
+    <script src="../dist/gremlin.jquery.min.js"></script>
+    <script src="spec/gremlinjs-jquery.js"></script>
+
+    <!--<script src="js/gremlins/cs/AddTest.js"></script>-->
+    <!--<script src="js/gremlins/cs/CreateTest.js"></script>-->
+
+</head>
+<body data-gremlin-config='{"debug":true}'>
+<div id="mocha"></div>
+
+<script src="lib/expect.js" type="text/javascript" charset="utf-8"></script>
+
+
+<!-- run mocha -->
+<script type="text/javascript" charset="utf-8">
+    // If tests run in a real browser
+    // Can alternatively do a check on window.PHANTOMJS
+    if (navigator.userAgent.indexOf('PhantomJS') < 0) {
+        mocha
+            // .globals(['Wombat', 'Apple']) // acceptable globals
+                .run();
+    }
+</script>
+</body>
+</html>

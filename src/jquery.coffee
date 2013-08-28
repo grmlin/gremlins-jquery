@@ -1,10 +1,7 @@
-class JQuery
-  isSupported = typeof window.jQuery is 'function' or typeof window.Zepto is 'function'
-
+class GremlinJQuery
   addElements = () ->
     if typeof @klass.elements is 'object'
       for own selector, propertyName of @klass.elements
-        throw new TypeError "Element selector have to be referenced by strings!" unless (typeof selector is "string")
         @[propertyName] = @$el.find(selector)
 
   addEvents = () ->
@@ -38,4 +35,4 @@ class JQuery
     addElements.call gremlinInstance
     addEvents.call gremlinInstance
 
-Gremlin.registerExtension JQuery
+Gremlin.registerExtension GremlinJQuery
