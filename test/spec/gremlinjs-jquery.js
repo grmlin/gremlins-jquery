@@ -63,23 +63,48 @@ describe('gremlinjs-jquery', function () {
         document.body.appendChild(el);
 
         var EventMapTest = G.define('EventMapTest', function () {
+                $(el).mouseenter();
                 $(el).find('button').click();
+                $(el).append("<form></form>");
+                $(el).find('form').submit();
             },
             {
+                onHover: function(evt, context){
+                    try {
+                        expect(this).to.be.an(EventMapTest);
+                        expect(evt.target).to.be(this.el);
+                        expect(context).to.be(this.el);
+                    } catch (e) {
+                        done(e);
+                    }
+                },
                 onClick: function (evt, context) {
                     try {
                         expect(this).to.be.an(EventMapTest);
                         expect(evt.target).to.be($(el).find('button')[0]);
                         expect(context).to.be($(el).find('button')[0]);
+                    } catch (e) {
+                        done(e);
+                    }
+                },
+                onSubmit: function (evt, context) {
+                    evt.preventDefault();
+                    try {
+                        expect(this).to.be.an(EventMapTest);
+                        expect(evt.target).to.be($(el).find('form')[0]);
+                        expect(context).to.be($(el).find('form')[0]);
                         done();
                     } catch (e) {
                         done(e);
                     }
                 }
+
             },
             {
                 events: {
-                    'click button': 'onClick'
+                    'mouseenter' : 'onHover',
+                    'click button': 'onClick',
+                    'submit form' : 'onSubmit'
                 }
             }
         );

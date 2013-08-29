@@ -1,14 +1,12 @@
 //@ sourceMappingURL=gremlin.jquery.map
 (function() {
-  var JQuery,
+  var GremlinJQuery,
     __hasProp = {}.hasOwnProperty;
 
-  JQuery = (function() {
-    var addElements, addEvents, isSupported;
+  GremlinJQuery = (function() {
+    var addElements, addEvents;
 
-    function JQuery() {}
-
-    isSupported = typeof window.jQuery === 'function' || typeof window.Zepto === 'function';
+    function GremlinJQuery() {}
 
     addElements = function() {
       var propertyName, selector, _ref, _results;
@@ -18,9 +16,6 @@
         for (selector in _ref) {
           if (!__hasProp.call(_ref, selector)) continue;
           propertyName = _ref[selector];
-          if (!(typeof selector === "string")) {
-            throw new TypeError("Element selector have to be referenced by strings!");
-          }
           _results.push(this[propertyName] = this.$el.find(selector));
         }
         return _results;
@@ -61,20 +56,20 @@
       }
     };
 
-    JQuery.extend = function(AbstractGremlin) {
+    GremlinJQuery.extend = function(AbstractGremlin) {
       return AbstractGremlin.IS_JQUERY = true;
     };
 
-    JQuery.bind = function(gremlinInstance) {
+    GremlinJQuery.bind = function(gremlinInstance) {
       gremlinInstance.$el = $(gremlinInstance.el);
       addElements.call(gremlinInstance);
       return addEvents.call(gremlinInstance);
     };
 
-    return JQuery;
+    return GremlinJQuery;
 
   })();
 
-  Gremlin.registerExtension(JQuery);
+  Gremlin.registerExtension(GremlinJQuery);
 
 }).call(this);
