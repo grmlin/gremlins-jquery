@@ -3,10 +3,6 @@
 
 describe('gremlinjs-jquery', function () {
 
-    it('extends Gizmo', function () {
-        expect(G.Gizmo.IS_JQUERY).to.be.ok();
-    });
-
     it('augments gremlin instances', function (done) {
         var el = document.createElement('div');
         el.setAttribute('data-gremlin', 'JQueryTest');
@@ -22,6 +18,31 @@ describe('gremlinjs-jquery', function () {
                 done(e);
             }
 
+        }, {
+
+        }, {
+            include: 'jquery'
+        });
+    });
+    it('augments gremlin instances 2', function (done) {
+        var el = document.createElement('div');
+        el.setAttribute('data-gremlin', 'JQueryTest2');
+
+        document.body.appendChild(el);
+
+        G.define('JQueryTest2', function () {
+
+            try {
+                expect(this.$el[0]).to.be(el);
+                done();
+            } catch (e) {
+                done(e);
+            }
+
+        }, {
+
+        }, {
+            include: 'jquery'
         });
     });
 
@@ -48,6 +69,7 @@ describe('gremlinjs-jquery', function () {
 
             },
             {
+                include: 'jquery',
                 elements: {
                     bar: 'bar',
                     '.foo': 'foo'
@@ -101,6 +123,7 @@ describe('gremlinjs-jquery', function () {
 
             },
             {
+                include: 'jquery',
                 events: {
                     'mouseenter' : 'onHover',
                     'click button': 'onClick',

@@ -1,6 +1,6 @@
 {
-  "name": "gremlinjs-interests",
-  "version": "0.1.0",
+  "name": "gremlinjs-jquery",
+  "version": "0.2.0",
   "main": "./src/Interests.coffee",
   "license": "MIT",
   "repository": {
