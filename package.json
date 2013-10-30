@@ -1,11 +1,11 @@
 {
   "name": "gremlinjs-jquery",
   "version": "0.2.0",
-  "main": "./src/Interests.coffee",
+  "main": "./src/jquery.coffee",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/grmlin/gremlinjs-interests.git"
+    "url": "https://github.com/grmlin/gremlinjs-jquery.git"
   },
   "dependencies": {},
   "devDependencies": {
