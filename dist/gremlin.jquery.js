@@ -5,8 +5,8 @@
 
   addElements = function() {
     var propertyName, selector, _ref, _results;
-    if (typeof this.klass.elements === 'object') {
-      _ref = this.klass.elements;
+    if (typeof this.constructor.elements === 'object') {
+      _ref = this.constructor.elements;
       _results = [];
       for (selector in _ref) {
         if (!__hasProp.call(_ref, selector)) continue;
@@ -21,8 +21,8 @@
     var ctx, event, handlerName, _fn, _ref,
       _this = this;
     ctx = this;
-    if (typeof this.klass.events === 'object') {
-      _ref = this.klass.events;
+    if (typeof this.constructor.events === 'object') {
+      _ref = this.constructor.events;
       _fn = function(handlerName, event) {
         var eventType, firstWhitespace, handler, isDelegated, target;
         if (!(typeof event === "string")) {
@@ -51,7 +51,7 @@
     }
   };
 
-  G.Module('jquery', {
+  Gremlin.Module('jquery', {
     extend: function() {},
     bind: function(gremlinInstance) {
       gremlinInstance.$el = $(gremlinInstance.el);

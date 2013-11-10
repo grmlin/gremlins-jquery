@@ -1,12 +1,12 @@
 addElements = () ->
-  if typeof @klass.elements is 'object'
-    for own selector, propertyName of @klass.elements
+  if typeof @constructor.elements is 'object'
+    for own selector, propertyName of @constructor.elements
       @[propertyName] = @$el.find(selector)
 
 addEvents = () ->
   ctx = @
-  if typeof @klass.events is 'object'
-    for own event, handlerName of @klass.events
+  if typeof @constructor.events is 'object'
+    for own event, handlerName of @constructor.events
       do (handlerName, event) =>
         throw new TypeError "Event selectors have to be referenced by strings!" unless (typeof event is "string")
 
