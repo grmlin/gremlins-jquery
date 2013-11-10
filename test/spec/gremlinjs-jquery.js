@@ -9,7 +9,7 @@ describe('gremlinjs-jquery', function () {
 
         document.body.appendChild(el);
 
-        G.define('JQueryTest', function () {
+        G.add('JQueryTest', G.Gizmo.extend(function () {
 
             try {
                 expect(this.$el[0]).to.be(el);
@@ -22,7 +22,7 @@ describe('gremlinjs-jquery', function () {
 
         }, {
             include: 'jquery'
-        });
+        }));
     });
     it('augments gremlin instances 2', function (done) {
         var el = document.createElement('div');
@@ -30,7 +30,7 @@ describe('gremlinjs-jquery', function () {
 
         document.body.appendChild(el);
 
-        G.define('JQueryTest2', function () {
+        G.add('JQueryTest2', G.Gizmo.extend(function () {
 
             try {
                 expect(this.$el[0]).to.be(el);
@@ -43,7 +43,7 @@ describe('gremlinjs-jquery', function () {
 
         }, {
             include: 'jquery'
-        });
+        }));
     });
 
     it('supports element maps', function (done) {
@@ -53,7 +53,7 @@ describe('gremlinjs-jquery', function () {
 
         document.body.appendChild(el);
 
-        G.define('ElementMapTest', function () {
+        G.add('ElementMapTest', G.Gizmo.extend(function () {
 
                 try {
                     expect(this.foo.length).to.be(1);
@@ -74,7 +74,7 @@ describe('gremlinjs-jquery', function () {
                     bar: 'bar',
                     '.foo': 'foo'
                 }
-            });
+            }));
     });
 
     it('supports event maps', function (done) {
@@ -84,14 +84,14 @@ describe('gremlinjs-jquery', function () {
 
         document.body.appendChild(el);
 
-        var EventMapTest = G.define('EventMapTest', function () {
+        var EventMapTest = G.add('EventMapTest', G.Gizmo.extend(function () {
                 $(el).mouseenter();
                 $(el).find('button').click();
                 $(el).append("<form></form>");
                 $(el).find('form').submit();
             },
             {
-                onHover: function(evt, context){
+                onHover: function (evt, context) {
                     try {
                         expect(this).to.be.an(EventMapTest);
                         expect(evt.target).to.be(this.el);
@@ -125,12 +125,12 @@ describe('gremlinjs-jquery', function () {
             {
                 include: 'jquery',
                 events: {
-                    'mouseenter' : 'onHover',
+                    'mouseenter': 'onHover',
                     'click button': 'onClick',
-                    'submit form' : 'onSubmit'
+                    'submit form': 'onSubmit'
                 }
             }
-        );
+        ));
 
 
     });
