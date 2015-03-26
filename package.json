@@ -1,6 +1,6 @@
 {
   "name": "gremlins-jquery",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "main": "index.js",
   "author": {
     "name": "Andreas Wehr"
@@ -11,9 +11,9 @@
     "url": "https://github.com/grmlin/gremlins-jquery.git"
   },
   "dependencies": {
-    "gremlins": "^0.8.0"
   },
   "devDependencies": {
+    "gremlins": "^0.8.0",
     "babelify": "^5.0.4",
     "browserify": "^9.0.3",
     "gulp": "^3.8.11",
