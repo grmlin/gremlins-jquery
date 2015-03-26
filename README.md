@@ -19,3 +19,19 @@ gremlin.js jQuery mixin
 download from `dist` 
 
     <script src="gremlins-jquery.js" />
+
+## Usage
+
+```js
+var $ = require('jquery'),
+  gremlins = require('gremlins'),
+  gremlinsJquery = require('gremlins-jquery')($);
+  
+gremlins.create({
+    mixins: [gremlinsJquery],
+    name: 'foo',
+    initialize() {
+       this.$el.text('foo is here!');
+    }
+});
+```
