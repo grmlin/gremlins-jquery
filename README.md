@@ -32,7 +32,7 @@ download from `dist`
 ```js
 var $ = require('jquery'),
   gremlins = require('gremlins'),
-  gremlinsJquery = require('gremlins-jquery')($);
+  gremlinsJquery = require('gremlins-jquery');
   
 gremlins.create({
     mixins: [gremlinsJquery],
