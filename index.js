@@ -33,7 +33,7 @@ function bindEvent(spec, handler, event) {
     }
 
     function cb(e, ...params) {
-        handler.call(spec, e, ...params);
+        return handler.call(spec, e, ...params);
     }
 
 
