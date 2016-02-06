@@ -43,10 +43,10 @@ gremlins.create({
     events: {
       'click button': 'onClick'
     },
-    initialize() {
+    initialize: function() {
        this.$el.addClass('ready');
     },
-    onClick() {
+    onClick: function() {
       this.$content.text('foo is here!');
     }
 });
