@@ -9,16 +9,6 @@ gremlin.js jQuery mixin
 ### NPM
 
     $ npm install gremlins-jquery
-    
-### Bower
-    
-    $bower install gremlins-jquery
-    
-### Classic
-
-download from `dist` 
-
-    <script src="gremlins-jquery.js" />
 
 ## Usage
 
@@ -30,13 +20,12 @@ download from `dist`
 ```
 
 ```js
-var $ = require('jquery'),
-  gremlins = require('gremlins'),
-  gremlinsJquery = require('gremlins-jquery');
+const $ = require('jquery');
+const gremlins = require('gremlins');
+const gremlinsJquery = require('gremlins-jquery');
   
-gremlins.create({
+gremlins.create('foo-gremlin', {
     mixins: [gremlinsJquery],
-    name: 'foo',
     elements: {
       '.content': '$content'
     },
