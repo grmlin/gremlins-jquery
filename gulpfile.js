@@ -6,91 +6,30 @@ var version    = require('./package.json').version;
 var rename     = require("gulp-rename");
 var through2   = require('through2');
 var browserify = require('browserify');
+var babel = require('gulp-babel');
 
+gulp.task("babel", function () {
+  return gulp.src("src/**/*.js")
+      .pipe(babel())
+      .pipe(gulp.dest("lib"));
+});
 
-gulp.task('scriptsTest', function () {
+gulp.task('scriptsTest', ['babel'], function () {
   webpack({
     entry: './test/src/gremlins-jquery.js',
     output: {
       filename: './test/specs/gremlins-jquery.js',
     },
-    module: {
-      loaders: [
-        {test: /\.js$/, exclude: /node_modules/, loader: "babel-loader"}
-      ]
-    }
-    // configuration
   }, function (err, stats) {
     if (err) throw new gutil.PluginError("webpack", err);
-    gutil.log("[webpack]", stats.toString({
-      // output options
+    gutil.log('[webpack]', stats.toString({
+      colors: true,
+      timings: true,
+      chunkModules: false,
     }));
     //callback();
   });
 
-//  return gulp.src('test/src/gremlins-jquery.js')
-//    .pipe(through2.obj(function (file, enc, next) {
-//      browserify(file.path, {
-//        standalone: 'gremlinsJquery',
-//        debug: false
-//      })
-//        .transform('babelify')
-//        .bundle(function (err, res) {
-//          // assumes file.contents is a Buffer
-//          file.contents = res;
-//          next(null, file);
-//        });
-//    }))
-//    .pipe(gulp.dest('./test/specs'));
-});
-
-gulp.task('scripts', function () {
-
-  webpack({
-    entry: './index.js',
-    output: {
-      filename: './dist/gremlins-jquery.js',
-      libraryTarget: "umd"
-    },
-    module: {
-      loaders: [
-        {test: /\.js$/, exclude: /node_modules/, loader: "babel-loader"}
-      ]
-    },
-    externals: [{
-      'jquery': {
-        root: '$',
-        amd: 'jquery',
-        commonjs: 'jquery',
-        commonjs2: 'jquery'
-      }
-    }]
-    // configuration
-  }, function (err, stats) {
-    if (err) throw new gutil.PluginError("webpack", err);
-    gutil.log("[webpack]", stats.toString({
-      // output options
-    }));
-    //callback();
-  });
-
-
-//  return gulp.src('index.js')
-//    .pipe(through2.obj(function (file, enc, next) {
-//      browserify(file.path, {
-//        standalone: 'gremlinsJquery',
-//        debug: false
-//      })
-//        .external(['jquery'])
-//        .transform('babelify')
-//        .bundle(function (err, res) {
-//          // assumes file.contents is a Buffer
-//          file.contents = res;
-//          next(null, file);
-//        });
-//    }))
-//    .pipe(rename('gremlins-jquery.js'))
-//    .pipe(gulp.dest('./dist'));
 });
 
 gulp.task('connect', function () {
@@ -102,12 +41,12 @@ gulp.task('connect', function () {
 });
 
 gulp.task("reload", function () {
-  gulp.src('lib/watched.js')
+  gulp.src('lib/index.js')
     .pipe(connect.reload());
 });
 
 gulp.task('watch', function () {
-  gulp.watch(['index.js', 'test/src/*.*'], ['scriptsTest', 'reload']);
+  gulp.watch(['src/index.js', 'test/src/*.*'], ['scriptsTest', 'reload']);
 });
 
 gulp.task('default', ['connect', 'scriptsTest', 'watch']);
