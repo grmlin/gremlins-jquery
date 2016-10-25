@@ -6,6 +6,8 @@ GREMLIN.JS jQuery mixin that supports event and element maps.
 
 ## Installation
 
+**requires `gremlins@1.1.x`**
+
 ### NPM
 
     $ npm install gremlins-jquery
