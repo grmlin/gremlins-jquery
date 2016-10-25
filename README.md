@@ -1,7 +1,7 @@
-gremlinjs-jquery
+gremlins-jquery
 ================
 
-gremlin.js jQuery mixin
+GREMLIN.JS jQuery mixin that supports event and element maps.
 
 
 ## Installation
@@ -9,6 +9,8 @@ gremlin.js jQuery mixin
 ### NPM
 
     $ npm install gremlins-jquery
+    
+make sure you have jQuery installed from npm, too.
 
 ## Usage
 
@@ -20,7 +22,6 @@ gremlin.js jQuery mixin
 ```
 
 ```js
-const $ = require('jquery');
 const gremlins = require('gremlins');
 const gremlinsJquery = require('gremlins-jquery');
   
@@ -32,8 +33,8 @@ gremlins.create('foo-gremlin', {
     events: {
       'click button': 'onClick'
     },
-    initialize() {
-       this.$el.addClass('ready');
+    created() {
+      this.$el.addClass('ready');
     },
     onClick() {
       this.$content.text('foo is here!');
