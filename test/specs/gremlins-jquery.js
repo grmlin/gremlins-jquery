@@ -46,7 +46,7 @@
 
 	var $ = __webpack_require__(1),
 	  gremlins = __webpack_require__(2),
-	  gremlinsJquery = __webpack_require__(13);
+	  gremlinsJquery = __webpack_require__(12);
 
 	describe('gremlinjs-jquery', function () {
 
@@ -116,15 +116,15 @@
 	      },
 	      onHover: function (evt) {
 	        try {
-	          expect(this.name).to.equal('jquery3-gremlin');
-	          expect(evt.target).to.be(this.el);
+	          expect(this.constructor.name).to.equal('jquery3-gremlin');
+	          expect(evt.target).to.be(this);
 	        } catch (e) {
 	          done(e);
 	        }
 	      },
 	      onClick: function (evt) {
 	        try {
-	          expect(this.name).to.equal('jquery3-gremlin');
+	          expect(this.constructor.name).to.equal('jquery3-gremlin');
 	          expect(evt.target).to.be($(el).find('button')[0]);
 	        } catch (e) {
 	          done(e);
@@ -133,7 +133,7 @@
 	      onSubmit: function (evt) {
 	        evt.preventDefault();
 	        try {
-	          expect(this.name).to.equal('jquery3-gremlin');
+	          expect(this.constructor.name).to.equal('jquery3-gremlin');
 	          expect(evt.target).to.be($(el).find('form')[0]);
 	        } catch (e) {
 	          done(e);
@@ -141,8 +141,8 @@
 	      },
 	      onCustom: function (evt, foo, bar) {
 	        try {
-	          expect(this.name).to.equal('jquery3-gremlin');
-	          expect(evt.target).to.be(this.el);
+	          expect(this.constructor.name).to.equal('jquery3-gremlin');
+	          expect(evt.target).to.be(this);
 	          expect(foo).to.be('foo');
 	          expect(bar).to.be.an('object');
 	          expect(bar.bar).to.be('bar');
@@ -10425,7 +10425,7 @@
 	 */
 	var consoleShim = __webpack_require__(5);
 	var Gremlin = __webpack_require__(6);
-	var Data = __webpack_require__(11);
+	var Data = __webpack_require__(10);
 
 	// let's add a branding so we can't include more than one instance of gremlin.js
 	var BRANDING = 'gremlins_connected';
@@ -10735,8 +10735,8 @@
 
 	'use strict';
 
-	var Factory = __webpack_require__(10);
-	var Data = __webpack_require__(11);
+	var Data = __webpack_require__(10);
+	var uuid = __webpack_require__(11);
 
 	var canRegisterElements = typeof document.registerElement === 'function';
 
@@ -10744,78 +10744,53 @@
 	  throw new Error('registerElement not available. Did you include the polyfill for older browsers?');
 	}
 
+	var gremlinId = function gremlinId() {
+	  return 'gremlins_' + uuid();
+	};
 	var styleElement = document.createElement('style');
 	var styleSheet = undefined;
 
 	document.head.appendChild(styleElement);
 	styleSheet = styleElement.sheet;
 
-	function createInstance(element, Spec) {
-	  var existingGremlins = Data.getGremlin(element);
-
-	  if (existingGremlins === null) {
-	    var gremlin = Factory.createInstance(element, Spec);
-	    Data.addGremlin(gremlin, element);
-
-	    if (typeof gremlin.initialize === 'function') {
-	      console.warn('<' + element.tagName + ' />\n' + 'the use of the `initialize` callback of a gremlin component is deprecated. ' + 'Use the `created` callback instead.');
-	      gremlin.initialize();
-	    } else {
-	      gremlin.created();
-	    }
-	  } else {
-	    // console.warn('exisiting gremlin found');
-	  }
-	}
-
-	function attachInstance(element) {
-	  var gremlin = Data.getGremlin(element);
-	  gremlin.attached();
-	}
-
-	function detachInstance(element) {
-	  var gremlin = Data.getGremlin(element);
-
-	  if (typeof gremlin.destroy === 'function') {
-	    console.warn('<' + element.tagName + ' />\n' + 'the use of the `destroy` callback of a gremlin component is deprecated. Use ' + 'the `detached` callback instead.');
-	    gremlin.destroy();
-	  } else {
-	    gremlin.detached();
-	  }
-	}
-
-	function updateAttr(element, name, previousValue, value) {
-	  var gremlin = Data.getGremlin(element);
-
-	  if (gremlin !== null) {
-	    gremlin.attributeDidChange(name, previousValue, value);
-	  }
-	}
-
 	module.exports = {
 	  register: function register(tagName, Spec) {
+	    // TODO test for reserved function names ['createdCallback', 'attachedCallback', '']
+
 	    var proto = {
 	      createdCallback: {
 	        value: function value() {
-	          createInstance(this, Spec);
-	        }
+	          this._gid = gremlinId();
+
+	          Data.addGremlin(this._gid);
+	          this.created();
+	        },
+
+	        writable: false
 	      },
 	      attachedCallback: {
 	        value: function value() {
-	          attachInstance(this);
+	          this.attached();
 	        }
 	      },
 	      detachedCallback: {
 	        value: function value() {
-	          detachInstance(this);
+	          this.detached();
 	        }
 	      },
 	      attributeChangedCallback: {
 	        value: function value(name, previousValue, _value) {
-	          updateAttr(this, name, previousValue, _value);
+	          this.attributeDidChange(name, previousValue, _value);
 	        }
 	      }
 	    };
+
+	    for (var key in Spec) {
+	      // eslint-disable-line guard-for-in
+	      proto[key] = {
+	        value: Spec[key]
+	      };
+	    }
 
 	    // insert the rule BEFORE registering the element. This is important because they may be inline
 	    // otherwise when first initialized.
@@ -10836,95 +10811,42 @@
 
 	"use strict";
 
-	module.exports = {
-	  createInstance: function createInstance(element, Spec) {
-	    return Object.create(Spec, {
-	      el: {
-	        value: element,
-	        writable: false
-	      }
-	    });
-	  }
-	};
-
-/***/ },
-/* 11 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var uuid = __webpack_require__(12);
-
-	var exp = 'gremlins_' + uuid();
-	var cache = {};
 	var pendingSearches = [];
 
-	var gremlinId = function gremlinId() {
-	  var id = 1;
-	  return function () {
-	    return id++;
-	  };
-	}();
-
 	var hasId = function hasId(element) {
-	  return element[exp] !== undefined;
-	};
-	var setId = function setId(element) {
-	  return element[exp] = gremlinId();
-	}; // eslint-disable-line no-param-reassign
-	var getId = function getId(element) {
-	  return hasId(element) ? element[exp] : setId(element);
+	  return element._gid !== undefined;
 	};
 
 	module.exports = {
-	  addGremlin: function addGremlin(gremlin, element) {
-	    var id = getId(element);
-
-	    if (cache[id] !== undefined) {
-	      console.warn('You can\'t add another gremlin to this element, it already uses one!', element); // eslint-disable-line no-console, max-len
-	    } else {
-	        cache[id] = gremlin;
-	      }
-
+	  addGremlin: function addGremlin(id) {
 	    pendingSearches = pendingSearches.filter(function (search) {
-	      var wasSearchedFor = search.element === element;
+	      var wasSearchedFor = search.element._gid === id;
 	      if (wasSearchedFor) {
-	        search.created(gremlin);
+	        search.resolve();
 	      }
 
 	      return !wasSearchedFor;
 	    });
 	  },
-	  getGremlin: function getGremlin(element) {
-	    var id = getId(element);
-	    var gremlin = cache[id];
-
-	    if (gremlin === undefined) {
-	      // console.warn(`This dom element does not use any gremlins!`, element);
-	    }
-	    return gremlin === undefined ? null : gremlin;
-	  },
 	  getGremlinAsync: function getGremlinAsync(element) {
-	    var _this = this;
-
 	    var timeout = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
 
-	    return new Promise(function (resolve) {
-	      var currentGremlin = _this.getGremlin(element);
-
-	      if (currentGremlin !== null) {
-	        resolve(currentGremlin);
+	    return new Promise(function (_resolve) {
+	      if (hasId(element)) {
+	        setTimeout(function () {
+	          return _resolve(element);
+	        }, 10);
 	      } else {
 	        (function () {
 	          var gremlinNotFoundTimeout = timeout !== null ? setTimeout(function () {
-	            resolve(null);
+	            _resolve(null);
 	          }, timeout) : null;
 
 	          pendingSearches.push({
 	            element: element,
-	            created: function created(createdGremlin) {
+	            resolve: function resolve() {
 	              clearTimeout(gremlinNotFoundTimeout);
-	              resolve(createdGremlin);
+	              _resolve(element);
 	            }
 	          });
 	        })();
@@ -10934,7 +10856,7 @@
 	};
 
 /***/ },
-/* 12 */
+/* 11 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -10945,7 +10867,7 @@
 	};
 
 /***/ },
-/* 13 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11008,7 +10930,7 @@
 
 	module.exports = {
 	  created: function created() {
-	    this.$el = (0, _jquery2.default)(this.el);
+	    this.$el = (0, _jquery2.default)(this);
 	    addElements(this);
 	    addEvents(this);
 	  }
