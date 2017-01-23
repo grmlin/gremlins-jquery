@@ -59,6 +59,7 @@
 	      created() {
 	        try {
 	          expect(this.$el[0]).to.be(el);
+	          el = null;
 	          done();
 	        } catch (e) {
 	          done(e);
@@ -85,6 +86,7 @@
 	          expect(this.foo.length).to.be(1);
 	          expect(this.foo.text()).to.be('foo');
 	          expect(this.bar.length).to.be(0);
+	          el = null;
 	          done();
 	        } catch (e) {
 	          done(e);
@@ -146,6 +148,7 @@
 	          expect(foo).to.be('foo');
 	          expect(bar).to.be.an('object');
 	          expect(bar.bar).to.be('bar');
+	          el = null;
 	          done();
 	        } catch (e) {
 	          done(e);
