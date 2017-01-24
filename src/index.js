@@ -48,7 +48,7 @@ function bindEvent(spec, handler, event) {
 
 module.exports = {
   created() {
-    this.$el = $(this);
+    this.$el = $(this.el);
     addElements(this);
     addEvents(this);
   }

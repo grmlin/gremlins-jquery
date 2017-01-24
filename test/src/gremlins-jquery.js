@@ -72,15 +72,15 @@ describe('gremlinjs-jquery', function () {
       },
       onHover: function (evt) {
         try {
-          expect(this.constructor.name).to.equal('jquery3-gremlin');
-          expect(evt.target).to.be(this);
+          expect(this.name).to.equal('jquery3-gremlin');
+          expect(evt.target).to.be(this.el);
         } catch (e) {
           done(e);
         }
       },
       onClick: function (evt) {
         try {
-          expect(this.constructor.name).to.equal('jquery3-gremlin');
+          expect(this.name).to.equal('jquery3-gremlin');
           expect(evt.target).to.be($(el).find('button')[0]);
         } catch (e) {
           done(e);
@@ -89,7 +89,7 @@ describe('gremlinjs-jquery', function () {
       onSubmit: function (evt) {
         evt.preventDefault();
         try {
-          expect(this.constructor.name).to.equal('jquery3-gremlin');
+          expect(this.name).to.equal('jquery3-gremlin');
           expect(evt.target).to.be($(el).find('form')[0]);
         } catch (e) {
           done(e);
@@ -97,8 +97,8 @@ describe('gremlinjs-jquery', function () {
       },
       onCustom: function (evt, foo, bar) {
         try {
-          expect(this.constructor.name).to.equal('jquery3-gremlin');
-          expect(evt.target).to.be(this);
+          expect(this.name).to.equal('jquery3-gremlin');
+          expect(evt.target).to.be(this.el);
           expect(foo).to.be('foo');
           expect(bar).to.be.an('object');
           expect(bar.bar).to.be('bar');

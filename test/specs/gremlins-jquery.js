@@ -118,15 +118,15 @@
 	      },
 	      onHover: function (evt) {
 	        try {
-	          expect(this.constructor.name).to.equal('jquery3-gremlin');
-	          expect(evt.target).to.be(this);
+	          expect(this.name).to.equal('jquery3-gremlin');
+	          expect(evt.target).to.be(this.el);
 	        } catch (e) {
 	          done(e);
 	        }
 	      },
 	      onClick: function (evt) {
 	        try {
-	          expect(this.constructor.name).to.equal('jquery3-gremlin');
+	          expect(this.name).to.equal('jquery3-gremlin');
 	          expect(evt.target).to.be($(el).find('button')[0]);
 	        } catch (e) {
 	          done(e);
@@ -135,7 +135,7 @@
 	      onSubmit: function (evt) {
 	        evt.preventDefault();
 	        try {
-	          expect(this.constructor.name).to.equal('jquery3-gremlin');
+	          expect(this.name).to.equal('jquery3-gremlin');
 	          expect(evt.target).to.be($(el).find('form')[0]);
 	        } catch (e) {
 	          done(e);
@@ -143,8 +143,8 @@
 	      },
 	      onCustom: function (evt, foo, bar) {
 	        try {
-	          expect(this.constructor.name).to.equal('jquery3-gremlin');
-	          expect(evt.target).to.be(this);
+	          expect(this.name).to.equal('jquery3-gremlin');
+	          expect(evt.target).to.be(this.el);
 	          expect(foo).to.be('foo');
 	          expect(bar).to.be.an('object');
 	          expect(bar.bar).to.be('bar');
@@ -10539,6 +10539,7 @@
 	  created: function created() {},
 	  attached: function attached() {},
 	  detached: function detached() {},
+	  attributeDidChange: function attributeDidChange() {},
 	  create: function create(tagName) {
 	    var Spec = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
@@ -10570,8 +10571,7 @@
 	    // and create the custom element for it
 	    GremlinElement.register(tagName, NewSpec);
 	    return NewSpec;
-	  },
-	  attributeDidChange: function attributeDidChange() {}
+	  }
 	};
 
 	module.exports = Gremlin;
@@ -10586,23 +10586,23 @@
 
 	var objectAssign = __webpack_require__(8);
 
-	function getMixins(gremlin) {
-	  if (Array.isArray(gremlin.mixins)) {
-	    return gremlin.mixins;
+	function getMixins(Spec) {
+	  if (Array.isArray(Spec.mixins)) {
+	    return Spec.mixins;
 	  }
 
-	  return gremlin.mixins ? [gremlin.mixins] : [];
+	  return Spec.mixins ? [Spec.mixins] : [];
 	}
 
-	function decorateProperty(gremlin, propertyName, property) {
-	  var gremlinProperty = gremlin[propertyName];
+	function decorateProperty(Spec, propertyName, property) {
+	  var gremlinProperty = Spec[propertyName];
 	  var moduleProperty = property;
 	  var gremlinPropertyType = typeof gremlinProperty === 'undefined' ? 'undefined' : _typeof(gremlinProperty);
 	  var modulePropertyType = typeof moduleProperty === 'undefined' ? 'undefined' : _typeof(moduleProperty);
 	  var isSamePropType = gremlinPropertyType === modulePropertyType;
 
 	  if (isSamePropType && modulePropertyType === 'function') {
-	    gremlin[propertyName] = function () {
+	    Spec[propertyName] = function () {
 	      // eslint-disable-line no-param-reassign, func-names
 	      // call the module first
 	      var moduleResult = moduleProperty.apply(this, arguments);
@@ -10616,29 +10616,29 @@
 	    };
 	  } else {
 	    console.warn( // eslint-disable-line no-console
-	    'Can\'t decorate gremlin property ' + ('<' + gremlin.tagName + ' />#' + propertyName + ':' + gremlinPropertyType + '« ') + ('with »Module#' + propertyName + ':' + modulePropertyType + '«. Only functions can be decorated!'));
+	    'Can\'t decorate gremlin property ' + ('<' + Spec.tagName + ' />#' + propertyName + ':' + gremlinPropertyType + '« ') + ('with »Module#' + propertyName + ':' + modulePropertyType + '«. Only functions can be decorated!'));
 	  }
 	}
 
-	function mixinModule(gremlin, Module) {
+	function mixinModule(Spec, Module) {
 	  Object.keys(Module).forEach(function (propertyName) {
 	    var property = Module[propertyName];
 
-	    if (gremlin[propertyName] === undefined) {
+	    if (Spec[propertyName] === undefined) {
 	      var descriptor = Object.getOwnPropertyDescriptor(Module, propertyName);
-	      Object.defineProperty(gremlin, propertyName, descriptor);
+	      Object.defineProperty(Spec, propertyName, descriptor);
 	    } else {
-	      decorateProperty(gremlin, propertyName, property);
+	      decorateProperty(Spec, propertyName, property);
 	    }
 	  });
 	}
 
 	module.exports = {
-	  mixinProps: function mixinProps(gremlin) {
-	    var modules = getMixins(gremlin);
+	  mixinProps: function mixinProps(Spec) {
+	    var modules = getMixins(Spec);
 	    // reverse the modules array to call decorated functions in the right order
 	    modules.reverse().forEach(function (Module) {
-	      return mixinModule(gremlin, Module);
+	      return mixinModule(Spec, Module);
 	    });
 	  }
 	};
@@ -10647,8 +10647,8 @@
 /* 8 */
 /***/ function(module, exports) {
 
-	'use strict';
 	/* eslint-disable no-unused-vars */
+	'use strict';
 	var hasOwnProperty = Object.prototype.hasOwnProperty;
 	var propIsEnumerable = Object.prototype.propertyIsEnumerable;
 
@@ -10660,51 +10660,7 @@
 		return Object(val);
 	}
 
-	function shouldUseNative() {
-		try {
-			if (!Object.assign) {
-				return false;
-			}
-
-			// Detect buggy property enumeration order in older V8 versions.
-
-			// https://bugs.chromium.org/p/v8/issues/detail?id=4118
-			var test1 = new String('abc');  // eslint-disable-line
-			test1[5] = 'de';
-			if (Object.getOwnPropertyNames(test1)[0] === '5') {
-				return false;
-			}
-
-			// https://bugs.chromium.org/p/v8/issues/detail?id=3056
-			var test2 = {};
-			for (var i = 0; i < 10; i++) {
-				test2['_' + String.fromCharCode(i)] = i;
-			}
-			var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
-				return test2[n];
-			});
-			if (order2.join('') !== '0123456789') {
-				return false;
-			}
-
-			// https://bugs.chromium.org/p/v8/issues/detail?id=3056
-			var test3 = {};
-			'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
-				test3[letter] = letter;
-			});
-			if (Object.keys(Object.assign({}, test3)).join('') !==
-					'abcdefghijklmnopqrst') {
-				return false;
-			}
-
-			return true;
-		} catch (e) {
-			// We don't expect any of the above to throw, but better to be safe.
-			return false;
-		}
-	}
-
-	module.exports = shouldUseNative() ? Object.assign : function (target, source) {
+	module.exports = Object.assign || function (target, source) {
 		var from;
 		var to = toObject(target);
 		var symbols;
@@ -10742,14 +10698,14 @@
 	var uuid = __webpack_require__(11);
 
 	var canRegisterElements = typeof document.registerElement === 'function';
+	var gremlinId = function gremlinId() {
+	  return 'gremlins_' + uuid();
+	};
 
 	if (!canRegisterElements) {
 	  throw new Error('registerElement not available. Did you include the polyfill for older browsers?');
 	}
 
-	var gremlinId = function gremlinId() {
-	  return 'gremlins_' + uuid();
-	};
 	var styleElement = document.createElement('style');
 	var styleSheet = undefined;
 
@@ -10758,53 +10714,50 @@
 
 	module.exports = {
 	  register: function register(tagName, Spec) {
-	    // TODO test for reserved function names ['createdCallback', 'attachedCallback', '']
-
 	    var proto = {
 	      createdCallback: {
 	        value: function value() {
-	          this._gid = gremlinId();
-
-	          Data.addGremlin(this._gid);
-	          this.created();
-	        },
-
-	        writable: false
+	          var id = gremlinId();
+	          this._gid = id;
+	          this.__gremlinInstance__ = Object.create(Spec, {
+	            _gid: {
+	              value: id,
+	              writable: false
+	            },
+	            el: {
+	              value: this,
+	              writable: false
+	            }
+	          });
+	          Data.addGremlin(id);
+	          this.__gremlinInstance__.created();
+	        }
 	      },
 	      attachedCallback: {
 	        value: function value() {
-	          this.attached();
+	          this.__gremlinInstance__.attached();
 	        }
 	      },
 	      detachedCallback: {
 	        value: function value() {
-	          this.detached();
+	          this.__gremlinInstance__.detached();
 	        }
 	      },
 	      attributeChangedCallback: {
 	        value: function value(name, previousValue, _value) {
-	          this.attributeDidChange(name, previousValue, _value);
+	          this.__gremlinInstance__.attributeDidChange(name, previousValue, _value);
 	        }
 	      }
 	    };
-
-	    for (var key in Spec) {
-	      // eslint-disable-line guard-for-in
-	      proto[key] = {
-	        value: Spec[key]
-	      };
-	    }
 
 	    // insert the rule BEFORE registering the element. This is important because they may be inline
 	    // otherwise when first initialized.
 	    styleSheet.insertRule(tagName + ' { display: block }', 0);
 
-	    var El = document.registerElement(tagName, {
+	    return document.registerElement(tagName, {
 	      name: tagName,
 	      prototype: Object.create(HTMLElement.prototype, proto)
 	    });
-
-	    return El;
 	  }
 	};
 
@@ -10816,8 +10769,8 @@
 
 	var pendingSearches = [];
 
-	var hasId = function hasId(element) {
-	  return element._gid !== undefined;
+	var hasComponent = function hasComponent(element) {
+	  return element.__gremlinInstance__ !== undefined;
 	};
 
 	module.exports = {
@@ -10835,9 +10788,9 @@
 	    var timeout = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
 
 	    return new Promise(function (_resolve) {
-	      if (hasId(element)) {
+	      if (hasComponent(element)) {
 	        setTimeout(function () {
-	          return _resolve(element);
+	          return _resolve(element.__gremlinInstance__);
 	        }, 10);
 	      } else {
 	        (function () {
@@ -10849,7 +10802,7 @@
 	            element: element,
 	            resolve: function resolve() {
 	              clearTimeout(gremlinNotFoundTimeout);
-	              _resolve(element);
+	              _resolve(element.__gremlinInstance__);
 	            }
 	          });
 	        })();
@@ -10933,7 +10886,7 @@
 
 	module.exports = {
 	  created: function created() {
-	    this.$el = (0, _jquery2.default)(this);
+	    this.$el = (0, _jquery2.default)(this.el);
 	    addElements(this);
 	    addEvents(this);
 	  }
